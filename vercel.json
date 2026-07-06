@@ -1,16 +1,18 @@
 {
   "version": 2,
-  "buildCommand": "pip install -r requirements.txt",
-  "outputDirectory": ".",
+  "builds": [
+    {
+      "src": "main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "main.py"
+    }
+  ],
   "env": {
     "PYTHONUNBUFFERED": "1"
-  },
-  "regions": ["sfo1"],
-  "functions": {
-    "api/index.py": {
-      "maxDuration": 30,
-      "memory": 3008,
-      "timeout": 30
-    }
   }
 }
