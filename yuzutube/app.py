@@ -232,34 +232,94 @@ class _UltraApp:
     
     async def _index(self) -> str:
         """メインページ（HTML）"""
-        template_path = os.path.join(
-            os.path.dirname(__file__),
-            'templates',
-            'index.html'
-        )
+        # 複数のパスを試す
+        possible_paths = [
+            os.path.join(os.path.dirname(__file__), 'templates', 'index.html'),
+            os.path.join(os.path.dirname(__file__), '..', 'yuzutube', 'templates', 'index.html'),
+            'yuzutube/templates/index.html',
+            'templates/index.html',
+        ]
         
-        try:
-            with open(template_path, 'r', encoding='utf-8') as f:
-                return f.read()
-        except FileNotFoundError:
-            return """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>yuzutube</title>
-                <style>
-                    body { font-family: sans-serif; background: #0f1729; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-                    .container { text-align: center; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h1>🔐 PHANTOM_PROTOCOL Initializing...</h1>
-                    <p>Template loading...</p>
+        for template_path in possible_paths:
+            if os.path.exists(template_path):
+                try:
+                    with open(template_path, 'r', encoding='utf-8') as f:
+                        return f.read()
+                except Exception as e:
+                    print(f"Error reading {template_path}: {e}")
+                    continue
+        
+        # フォールバック：簡易HTMLを返す
+        return """
+        <!DOCTYPE html>
+        <html lang="ja">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>yuzutube - PHANTOM_PROTOCOL</title>
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                    background: linear-gradient(135deg, #0f1729 0%, #1a2332 100%);
+                    color: #f8fafc;
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .container {
+                    text-align: center;
+                    padding: 2rem;
+                    max-width: 600px;
+                }
+                h1 {
+                    font-size: 3rem;
+                    margin-bottom: 1rem;
+                    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+                p {
+                    color: #94a3b8;
+                    font-size: 1.1rem;
+                    margin-bottom: 2rem;
+                }
+                .status {
+                    background: rgba(59, 130, 246, 0.1);
+                    border: 1px solid rgba(59, 130, 246, 0.3);
+                    border-radius: 0.5rem;
+                    padding: 1.5rem;
+                    margin-bottom: 1rem;
+                }
+                .spinner {
+                    display: inline-block;
+                    width: 2rem;
+                    height: 2rem;
+                    border: 2px solid rgba(59, 130, 246, 0.2);
+                    border-top-color: #3b82f6;
+                    border-radius: 50%;
+                    animation: spin 0.8s linear infinite;
+                }
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>🔐 yuzutube</h1>
+                <p>PHANTOM_PROTOCOL v2.0.0-ULTRA</p>
+                <div class="status">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 1rem;">初期化中...</p>
                 </div>
-            </body>
-            </html>
-            """
+                <p style="font-size: 0.9rem; color: #64748b;">テンプレートを読み込み中です</p>
+            </div>
+        </body>
+        </html>
+        """
     
     async def _health(self) -> dict:
         """ヘルスチェック"""
