@@ -4,9 +4,14 @@
 究極の難読化型アプリケーション
 """
 
+import sys
+import os
+
+# プロジェクトルートをPythonパスに追加
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from yuzutube.app import app
 import uvicorn
-import sys
 
 # Vercel用ハンドラー
 handler = app
