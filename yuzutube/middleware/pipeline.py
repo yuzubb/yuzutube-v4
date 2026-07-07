@@ -3,14 +3,16 @@
 責任の鎖パターン、インターセプター、DI、メタプログラミング
 """
 
-from typing import Callable, Any, Awaitable, Optional, List
-from functools import wraps
+from typing import Callable, Any, Awaitable, Optional, List, Dict
+from functools import wraps, lru_cache
+import inspect
+from dataclasses import dataclass
+from enum import Enum
+import asyncio
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 from datetime import datetime
-import inspect
-import weakref
 from abc import ABC, abstractmethod
 
 
@@ -43,7 +45,7 @@ class _PerformanceMonitor(_Interceptor):
     """パフォーマンス監視"""
     
     def __init__(self):
-        self._metrics = weakref.WeakValueDictionary()
+        self._metrics = {}
     
     async def pre_process(self, context: Dict) -> None:
         context['perf_start'] = datetime.utcnow()
@@ -139,7 +141,3 @@ class _DynamicMiddleware(BaseHTTPMiddleware):
         response.headers['X-Response-Time'] = str(context.get('elapsed_ms', 0))
         
         return response
-
-
-import asyncio
-from typing import Dict
