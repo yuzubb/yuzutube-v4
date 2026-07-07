@@ -90,7 +90,7 @@ class _AdvancedCircuitBreaker:
 class _RateLimitBucket:
     """トークンバケット式レート制限"""
     capacity: int = 100
-    refill_rate: float = 10.0  # per second
+    refill_rate: float = 10.0
     tokens: float = field(default=0)
     last_refill: datetime = field(default_factory=datetime.utcnow)
     _lock: asyncio.Lock = field(default_factory=asyncio.Lock)
